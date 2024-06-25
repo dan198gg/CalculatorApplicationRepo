@@ -1,5 +1,6 @@
 package com.example.calculatorapplication
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.widget.Button
 import androidx.activity.ComponentActivity
@@ -8,6 +9,9 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+
+
+
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +31,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,6 +51,7 @@ class MainActivity : ComponentActivity() {
 }
 
 
+@SuppressLint("SuspiciousIndentation")
 @Preview
 @Composable
 fun screen(){
@@ -65,54 +74,68 @@ fun screen(){
         Text(
             text = num, fontSize = 54.sp, color = Color.White, modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.25f)
+                .fillMaxHeight(0.45f)
         )
         Row {
 
 
-            Box {
+            Box(modifier = Modifier.weight(0.7f)) {
                 Column {
 
 
-                    Row {
+                    Row(modifier = Modifier.weight(1f)) {
                         var i=0
                         repeat(3) {
                             Button(
                                 onClick = {
                                     if (listOfSymbolsAtTheTop[i-1] == "%") {
                                         numSaved = num.toLong()
-                                        num = ""
-                                        operation = "%"
+                                        if (numSaved.toString() != "0") {
+                                            num = (numSaved % num.toLong()).toString()
+                                            operation = "%"
+                                        } else {
+                                            operation = "%"
+                                            num = ""
+                                        }
+
                                     } else if (listOfSymbolsAtTheTop[i-1] == "±") {
-                                        numSaved = num.toLong()
-                                        num = ""
-                                        operation = "±"
-                                    } else num = ""
+                                        if (numSaved.toString()=="0") {
+                                            numSaved = num.toLong()
+                                            num = ""
+                                            operation = "±"
+                                        }
+                                    } else {num = ""
+                                    operation=""
+                                    numSaved=0}
+
+
                                 },
                                 colors = ButtonDefaults.buttonColors(Color.Gray),
                                 modifier = Modifier
-                                    .size(90.dp)
+                                    .weight(1f)
+                                    .fillMaxHeight()
                                     .padding(3.dp)
                             ) {
-                                Text(text = listOfSymbolsAtTheTop[i])
+                                Text(text = listOfSymbolsAtTheTop[i], fontSize = 25.sp)
                             }
                             i+=1
                         }
                     }
                     var numB=1
                     repeat(3) {
-                        Row {
+                        Row(modifier = Modifier.weight(1f)) {
 
                             repeat(3) {
                             var numButtonThis=numB
                                 Button(
                                     onClick = { num += numButtonThis.toString() },
                                     modifier = Modifier
-                                        .size(90.dp)
+                                        .weight(0.3f).fillMaxHeight()
                                         .padding(3.dp),
                                     colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray)
                                 ) {
                                     Text(
+                                        fontSize = 25.sp,
                                         text = numB.toString(),
                                         color = Color.White,
                                         modifier = Modifier.align(alignment = Alignment.CenterVertically)
@@ -124,22 +147,22 @@ fun screen(){
 
                         }
                     }
-                    Row {
+                    Row (modifier = Modifier.weight(1f)){
 
 
                         Button(
                             onClick = { num += "0" },
                             modifier = Modifier
-                                .padding(3.dp)
-                                .size(175.dp, 90.dp),
+                                .padding(3.dp).fillMaxHeight()
+                                .weight(0.6f),
                             colors = ButtonDefaults.buttonColors(Color.DarkGray)
                         ) {
                             Text(text = "0")
                         }
                         Button(
                             onClick = { num+="." }, modifier = Modifier
-                                .padding(3.dp)
-                                .size(90.dp), colors = ButtonDefaults.buttonColors(Color.DarkGray)
+                                .padding(3.dp).fillMaxHeight()
+                                .weight(0.3f), colors = ButtonDefaults.buttonColors(Color.DarkGray)
                         ) {
                             Text(text = ".")
 
@@ -147,13 +170,13 @@ fun screen(){
                         }
                     }
                 }
-            }
-            Column {
+            }//                arrayListOf("÷","x","-","+","=")
+            Column(modifier=Modifier.weight(0.24f)) {
                 for (j in 0..listOfSymbolsAtTheRight.size-1){
-                    Button(onClick = { /*TODO*/ }, colors = ButtonDefaults.buttonColors(Color.Green), modifier = Modifier
-                        .size(90.dp)
+                    Button(onClick = {if (listOfSymbolsAtTheRight[j]=="÷") numSaved/100*num.toLong()}, colors = ButtonDefaults.buttonColors(Color.Green), modifier = Modifier
+                        .weight(0.25f).fillMaxWidth(1f)
                         .padding(3.dp)) {
-                     Text(text =listOfSymbolsAtTheRight[j] )
+                     Text(text =listOfSymbolsAtTheRight[j],fontSize = 25.sp )
                     }
                 }
             }
