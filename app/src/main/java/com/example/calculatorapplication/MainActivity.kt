@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
@@ -35,10 +36,12 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.calculatorapplication.ui.theme.CalculatorApplicationTheme
+import java.time.format.TextStyle
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,11 +75,11 @@ fun screen(){
     var listOfSymbolsAtTheRight= arrayListOf("÷","x","-","+","=")
 
         Text(
-            text = num, fontSize = 54.sp, color = Color.White, modifier = Modifier
+            text = num, fontSize = 104.sp, color = Color.White, modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight(0.45f)
         )
-        Row {
+        Row(modifier = Modifier.offset(0.dp,-30.dp)) {
 
 
             Box(modifier = Modifier.weight(0.7f)) {
@@ -85,29 +88,41 @@ fun screen(){
 
                     Row(modifier = Modifier.weight(1f)) {
                         var i=0
-                        repeat(3) {
+                        for (i in 0..<listOfSymbolsAtTheTop.size) {
                             Button(
                                 onClick = {
-                                    if (listOfSymbolsAtTheTop[i-1] == "%") {
-                                        numSaved = num.toLong()
-                                        if (numSaved.toString() != "0") {
+                                    if(listOfSymbolsAtTheTop[i]=="±"){
+                                        if (operation!=""){
+                                        num=(numSaved * (-1)).toString()
+                                        numSaved=num.toLong()
+                                        operation = ""
+                                            }
+                                        else{
+                                            num=(num.toLong() * (-1)).toString()
+                                            numSaved=num.toLong()
+                                            operation = ""
+                                        }
+                                    }
+                                    else if (listOfSymbolsAtTheTop[i]=="C"){
+                                        num=""
+                                        numSaved=0
+                                        operation=""
+                                    }
+
+                                    else if (operation=="") {
+                                        operation = listOfSymbolsAtTheTop[i]
+                                        numSaved=num.toLong()
+                                        num=""
+                                    }
+
+                                    else {
+                                        if (operation == "%") {
                                             num = (numSaved % num.toLong()).toString()
-                                            operation = "%"
-                                        } else {
-                                            operation = "%"
-                                            num = ""
+                                            operation = listOfSymbolsAtTheTop[i]
+                                            numSaved=num.toLong()
                                         }
 
-                                    } else if (listOfSymbolsAtTheTop[i-1] == "±") {
-                                        if (numSaved.toString()=="0") {
-                                            numSaved = num.toLong()
-                                            num = ""
-                                            operation = "±"
-                                        }
-                                    } else {num = ""
-                                    operation=""
-                                    numSaved=0}
-
+                                    }
 
                                 },
                                 colors = ButtonDefaults.buttonColors(Color.Gray),
@@ -118,7 +133,7 @@ fun screen(){
                             ) {
                                 Text(text = listOfSymbolsAtTheTop[i], fontSize = 25.sp)
                             }
-                            i+=1
+
                         }
                     }
                     var numB=1
@@ -157,14 +172,14 @@ fun screen(){
                                 .weight(0.6f),
                             colors = ButtonDefaults.buttonColors(Color.DarkGray)
                         ) {
-                            Text(text = "0")
+                            Text(text = "0", fontSize = 25.sp)
                         }
                         Button(
                             onClick = { num+="." }, modifier = Modifier
                                 .padding(3.dp).fillMaxHeight()
                                 .weight(0.3f), colors = ButtonDefaults.buttonColors(Color.DarkGray)
                         ) {
-                            Text(text = ".")
+                            Text(text = ".", fontSize = 25.sp)
 
 
                         }
