@@ -64,14 +64,19 @@ fun screen(){
     var numBtn by rememberSaveable {
         mutableStateOf(1)
     }
-    var numSaved by rememberSaveable {
+    var numSavedLong by rememberSaveable {
         mutableStateOf<Long>(0)
     }
     var operation by rememberSaveable {
         mutableStateOf("")
     }
+    var numSavedFloat by rememberSaveable {
+        mutableStateOf<Double>(0.0)
+    }
     var listOfSymbolsAtTheTop= arrayListOf("%","±","C")
-    Column(modifier = Modifier.background(Color.Black).fillMaxSize()) {
+    Column(modifier = Modifier
+        .background(Color.Black)
+        .fillMaxSize()) {
     var listOfSymbolsAtTheRight= arrayListOf("÷","x","-","+","=")
 
         Text(
@@ -91,35 +96,59 @@ fun screen(){
                         for (i in 0..<listOfSymbolsAtTheTop.size) {
                             Button(
                                 onClick = {
+
                                     if(listOfSymbolsAtTheTop[i]=="±"){
                                         if (operation!=""){
-                                        num=(numSaved * (-1)).toString()
-                                        numSaved=num.toLong()
-                                        operation = ""
+                                            if (num.count{c->c== '.' }==1) {
+                                                num = (numSavedFloat * (-1)).toString()
+                                                numSavedFloat = num.toDouble()
+                                                operation = ""
+                                            }else{
+                                                num = (numSavedLong * (-1)).toString()
+                                                numSavedLong = num.toLong()
+                                                operation = ""
                                             }
-                                        else{
-                                            num=(num.toLong() * (-1)).toString()
-                                            numSaved=num.toLong()
+                                            } else{
+                                                if (num.count{c->c== '.' }==1){
+                                            num=(num.toDouble() * (-1)).toString()
+                                            numSavedFloat=num.toDouble()
                                             operation = ""
+                                                    }else{
+                                                    num=(num.toLong() * (-1)).toString()
+                                                    numSavedLong=num.toLong()
+                                                    operation = ""
+                                                }
                                         }
-                                    }
+                                        }
+
                                     else if (listOfSymbolsAtTheTop[i]=="C"){
                                         num=""
-                                        numSaved=0
+                                        numSavedLong=0
+                                        numSavedFloat=0.0
                                         operation=""
                                     }
 
                                     else if (operation=="") {
                                         operation = listOfSymbolsAtTheTop[i]
-                                        numSaved=num.toLong()
+                                        if (num.count{c->c== '.' }==1) {
+                                            numSavedFloat = num.toDouble()
+                                        }else{
+                                            numSavedLong = num.toLong()
+                                        }
                                         num=""
                                     }
 
                                     else {
                                         if (operation == "%") {
-                                            num = (numSaved % num.toLong()).toString()
+                                            if (num.count{c->c== '.' }==1){
+                                            num = (numSavedFloat % num.toDouble()).toString()
                                             operation = listOfSymbolsAtTheTop[i]
-                                            numSaved=num.toLong()
+                                            numSavedFloat=num.toDouble()
+                                            }else{
+                                                num = (numSavedLong % num.toLong()).toString()
+                                                operation = listOfSymbolsAtTheTop[i]
+                                                numSavedLong=num.toLong()
+                                            }
                                         }
 
                                     }
@@ -143,9 +172,14 @@ fun screen(){
                             repeat(3) {
                             var numButtonThis=numB
                                 Button(
-                                    onClick = { num += numButtonThis.toString() },
+                                    onClick = { num += numButtonThis.toString()
+                                              if (num.toMutableList()[0]=='0' && num.toMutableList()[1]!='.'){
+                                                  num= num.toMutableList().removeAt(0).toString()
+                                              }
+                                    },
                                     modifier = Modifier
-                                        .weight(0.3f).fillMaxHeight()
+                                        .weight(0.3f)
+                                        .fillMaxHeight()
                                         .padding(3.dp),
                                     colors = ButtonDefaults.buttonColors(containerColor = Color.DarkGray)
                                 ) {
@@ -166,9 +200,10 @@ fun screen(){
 
 
                         Button(
-                            onClick = { num += "0" },
+                            onClick = { if(num.isEmpty() || num.length>=1 ) num += "0" },
                             modifier = Modifier
-                                .padding(3.dp).fillMaxHeight()
+                                .padding(3.dp)
+                                .fillMaxHeight()
                                 .weight(0.6f),
                             colors = ButtonDefaults.buttonColors(Color.DarkGray)
                         ) {
@@ -176,7 +211,8 @@ fun screen(){
                         }
                         Button(
                             onClick = { num+="." }, modifier = Modifier
-                                .padding(3.dp).fillMaxHeight()
+                                .padding(3.dp)
+                                .fillMaxHeight()
                                 .weight(0.3f), colors = ButtonDefaults.buttonColors(Color.DarkGray)
                         ) {
                             Text(text = ".", fontSize = 25.sp)
@@ -188,8 +224,9 @@ fun screen(){
             }//                arrayListOf("÷","x","-","+","=")
             Column(modifier=Modifier.weight(0.24f)) {
                 for (j in 0..listOfSymbolsAtTheRight.size-1){
-                    Button(onClick = {if (listOfSymbolsAtTheRight[j]=="÷") numSaved/100*num.toLong()}, colors = ButtonDefaults.buttonColors(Color.Green), modifier = Modifier
-                        .weight(0.25f).fillMaxWidth(1f)
+                    Button(onClick = {if (listOfSymbolsAtTheRight[j]=="÷") numSavedLong/100*num.toLong()}, colors = ButtonDefaults.buttonColors(Color.Green), modifier = Modifier
+                        .weight(0.25f)
+                        .fillMaxWidth(1f)
                         .padding(3.dp)) {
                      Text(text =listOfSymbolsAtTheRight[j],fontSize = 25.sp )
                     }
