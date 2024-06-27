@@ -2,7 +2,7 @@ package com.example.calculatorapplication
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.widget.Button
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -18,11 +18,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,16 +29,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
-import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.calculatorapplication.ui.theme.CalculatorApplicationTheme
-import java.time.format.TextStyle
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +49,7 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun screen(){
+    var context=LocalContext.current
     var num by rememberSaveable {
         mutableStateOf("")
     }
@@ -70,7 +62,7 @@ fun screen(){
     var operation by rememberSaveable {
         mutableStateOf("")
     }
-    var numSavedFloat by rememberSaveable {
+    var numSavedDouble by rememberSaveable {
         mutableStateOf<Double>(0.0)
     }
     var listOfSymbolsAtTheTop= arrayListOf("%","±","C")
@@ -96,62 +88,72 @@ fun screen(){
                         for (i in 0..<listOfSymbolsAtTheTop.size) {
                             Button(
                                 onClick = {
-
-                                    if(listOfSymbolsAtTheTop[i]=="±"){
-                                        if (operation!=""){
-                                            if (num.count{c->c== '.' }==1) {
-                                                num = (numSavedFloat * (-1)).toString()
-                                                numSavedFloat = num.toDouble()
+                                if (num.isEmpty() && operation==""){
+                                    Toast.makeText(context, "Введи число, друг", Toast.LENGTH_SHORT).show()
+                                }
+                                    else {
+                                    if (listOfSymbolsAtTheTop[i] == "±") {
+                                        if (operation != "") {
+                                            if (num.count { c -> c == '.' } == 1) {
+                                                num = (numSavedDouble * (-1)).toString()
+                                                numSavedDouble = num.toDouble()
                                                 operation = ""
-                                            }else{
+                                            } else {
                                                 num = (numSavedLong * (-1)).toString()
                                                 numSavedLong = num.toLong()
                                                 operation = ""
                                             }
-                                            } else{
-                                                if (num.count{c->c== '.' }==1){
-                                            num=(num.toDouble() * (-1)).toString()
-                                            numSavedFloat=num.toDouble()
-                                            operation = ""
-                                                    }else{
-                                                    num=(num.toLong() * (-1)).toString()
-                                                    numSavedLong=num.toLong()
-                                                    operation = ""
-                                                }
+                                        } else {
+                                            if (num.count { c -> c == '.' } == 1) {
+                                                num = (num.toDouble() * (-1)).toString()
+                                                numSavedDouble = num.toDouble()
+                                                operation = ""
+                                            } else {
+                                                num = (num.toLong() * (-1)).toString()
+                                                numSavedLong = num.toLong()
+                                                operation = ""
+                                            }
                                         }
-                                        }
-
-                                    else if (listOfSymbolsAtTheTop[i]=="C"){
-                                        num=""
-                                        numSavedLong=0
-                                        numSavedFloat=0.0
-                                        operation=""
-                                    }
-
-                                    else if (operation=="") {
+                                    } else if (listOfSymbolsAtTheTop[i] == "C") {
+                                        num = ""
+                                        numSavedLong = 0
+                                        numSavedDouble = 0.0
+                                        operation = ""
+                                    } else if (operation == "") {
                                         operation = listOfSymbolsAtTheTop[i]
-                                        if (num.count{c->c== '.' }==1) {
-                                            numSavedFloat = num.toDouble()
-                                        }else{
+                                        if (num.count { c -> c == '.' } == 1) {
+                                            numSavedDouble = num.toDouble()
+                                        } else {
                                             numSavedLong = num.toLong()
                                         }
-                                        num=""
+                                        num = ""
                                     }
 
-                                    else {
-                                        if (operation == "%") {
-                                            if (num.count{c->c== '.' }==1){
-                                            num = (numSavedFloat % num.toDouble()).toString()
+                                        else if (operation=="") {
                                             operation = listOfSymbolsAtTheTop[i]
-                                            numSavedFloat=num.toDouble()
+                                            if (num.count{c->c== '.' }==1) {
+                                                numSavedDouble = num.toDouble()
                                             }else{
+                                                numSavedLong = num.toLong()
+                                            }
+                                            num=""
+                                        }
+
+                                     else {
+                                        if (operation == "%") {
+                                            if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
+                                                num = (numSavedDouble % num.toDouble()).toString()
+                                                operation = listOfSymbolsAtTheTop[i]
+                                                numSavedDouble = num.toDouble()
+                                            } else {
                                                 num = (numSavedLong % num.toLong()).toString()
                                                 operation = listOfSymbolsAtTheTop[i]
-                                                numSavedLong=num.toLong()
+                                                numSavedLong = num.toLong()
                                             }
                                         }
 
                                     }
+                                }
 
                                 },
                                 colors = ButtonDefaults.buttonColors(Color.Gray),
@@ -222,9 +224,134 @@ fun screen(){
                     }
                 }
             }//                arrayListOf("÷","x","-","+","=")
+            //if (listOfSymbolsAtTheRight[j]=="÷") numSavedLong/100*num.toLong()
             Column(modifier=Modifier.weight(0.24f)) {
                 for (j in 0..listOfSymbolsAtTheRight.size-1){
-                    Button(onClick = {if (listOfSymbolsAtTheRight[j]=="÷") numSavedLong/100*num.toLong()}, colors = ButtonDefaults.buttonColors(Color.Green), modifier = Modifier
+                    Button(onClick = {
+                        if (num.isEmpty() && operation == "") {
+                            Toast.makeText(context, "Введи число, друг", Toast.LENGTH_SHORT).show()
+                        } else {
+
+
+                            if (listOfSymbolsAtTheRight[j] == "=") {
+                                if (operation == "%") {
+                                    if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
+                                        num = (numSavedDouble % num.toDouble()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedDouble = num.toDouble()
+                                    } else {
+                                        num = (numSavedLong % num.toLong()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedLong = num.toLong()
+                                    }
+                                }
+                                if (operation == "÷") {
+                                    if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
+                                        num = (numSavedDouble / 100 * num.toDouble()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedDouble = num.toDouble()
+                                    } else {
+                                        num = (numSavedLong / 100 * num.toLong()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedLong = num.toLong()
+                                    }
+                                }
+                                if (operation == "x") {
+                                    if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
+                                        num = (numSavedDouble * num.toDouble()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedDouble = num.toDouble()
+                                    } else {
+                                        num = (numSavedLong * num.toLong()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedLong = num.toLong()
+                                    }
+                                }
+                                if (operation == "-") {
+                                    if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
+                                        num = (numSavedDouble - num.toDouble()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedDouble = num.toDouble()
+                                    } else {
+                                        num = (numSavedLong - num.toLong()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedLong = num.toLong()
+                                    }
+                                }
+                                if (operation == "+") {
+                                    if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
+                                        num = (numSavedDouble + num.toDouble()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedDouble = num.toDouble()
+                                    } else {
+                                        num = (numSavedLong + num.toLong()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedLong = num.toLong()
+                                    }
+                                }
+                            }
+
+
+
+                        else if (operation == "") {
+                                operation = listOfSymbolsAtTheRight[j]
+                                if (num.count { c -> c == '.' } == 1) {
+                                    numSavedDouble = num.toDouble()
+                                } else {
+                                    numSavedLong = num.toLong()
+                                }
+                                num = ""
+                            } else {
+                                if (operation == "÷") {
+                                    if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
+                                        num = (numSavedDouble / 100 * num.toDouble()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedDouble = num.toDouble()
+                                    } else {
+                                        num = (numSavedLong / 100 * num.toLong()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedLong = num.toLong()
+                                    }
+                                }
+                                if (operation == "x") {
+                                    if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
+                                        num = (numSavedDouble * num.toDouble()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedDouble = num.toDouble()
+                                    } else {
+                                        num = (numSavedLong * num.toLong()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedLong = num.toLong()
+                                    }
+                                }
+                                if (operation == "-") {
+                                    if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
+                                        num = (numSavedDouble - num.toDouble()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedDouble = num.toDouble()
+                                    } else {
+                                        num = (numSavedLong - num.toLong()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedLong = num.toLong()
+                                    }
+                                }
+                                if (operation == "+") {
+                                    if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
+                                        num = (numSavedDouble + num.toDouble()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedDouble = num.toDouble()
+                                    } else {
+                                        num = (numSavedLong + num.toLong()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedLong = num.toLong()
+                                    }
+                                }
+                            }
+                        }
+                        }
+
+
+                        , colors = ButtonDefaults.buttonColors(Color.Green), modifier = Modifier
                         .weight(0.25f)
                         .fillMaxWidth(1f)
                         .padding(3.dp)) {
