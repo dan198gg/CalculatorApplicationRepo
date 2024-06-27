@@ -151,9 +151,55 @@ fun screen(){
                                                 numSavedLong = num.toLong()
                                             }
                                         }
+                                        else if (operation == "÷") {
+                                            if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
+                                                num = (numSavedDouble / 100 * num.toDouble()).toString()
+                                                operation = listOfSymbolsAtTheTop[i]
+                                                numSavedDouble = num.toDouble()
+                                            } else {
+                                                num = (numSavedLong / 100 * num.toLong()).toString()
+                                                operation = listOfSymbolsAtTheTop[i]
+                                                numSavedLong = num.toLong()
+                                            }
+                                        }
+                                        else if (operation == "x") {
+                                            if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
+                                                num = (numSavedDouble * num.toDouble()).toString()
+                                                operation = listOfSymbolsAtTheTop[i]
+                                                numSavedDouble = num.toDouble()
+                                            } else {
+                                                num = (numSavedLong * num.toLong()).toString()
+                                                operation = listOfSymbolsAtTheTop[i]
+                                                numSavedLong = num.toLong()
+                                            }
+                                        }
+                                        else if (operation == "-") {
+                                            if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
+                                                num = (numSavedDouble - num.toDouble()).toString()
+                                                operation = listOfSymbolsAtTheTop[i]
+                                                numSavedDouble = num.toDouble()
+                                            } else {
+                                                num = (numSavedLong - num.toLong()).toString()
+                                                operation = listOfSymbolsAtTheTop[i]
+                                                numSavedLong = num.toLong()
+                                            }
+                                        }
+                                        else if (operation == "+") {
+                                            if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
+                                                num = (numSavedDouble + num.toDouble()).toString()
+                                                operation = listOfSymbolsAtTheTop[i]
+                                                numSavedDouble = num.toDouble()
+                                            } else {
+
+                                                num = (numSavedLong + num.toLong()).toString()
+                                                operation = listOfSymbolsAtTheTop[i]
+                                                numSavedLong = num.toLong()
+                                            }
+                                        }
+                                    }
 
                                     }
-                                }
+
 
                                 },
                                 colors = ButtonDefaults.buttonColors(Color.Gray),
@@ -174,7 +220,11 @@ fun screen(){
                             repeat(3) {
                             var numButtonThis=numB
                                 Button(
-                                    onClick = { num += numButtonThis.toString()
+                                    onClick = {
+                                        if (operation!=""&& (num==numSavedLong.toString()||num==numSavedDouble.toString())){
+                                            num=""
+                                        }
+                                        num += numButtonThis.toString()
                                               if (num.toMutableList()[0]=='0' && num.toMutableList()[1]!='.'){
                                                   num= num.toMutableList().removeAt(0).toString()
                                               }
@@ -226,7 +276,7 @@ fun screen(){
             }//                arrayListOf("÷","x","-","+","=")
             //if (listOfSymbolsAtTheRight[j]=="÷") numSavedLong/100*num.toLong()
             Column(modifier=Modifier.weight(0.24f)) {
-                for (j in 0..listOfSymbolsAtTheRight.size-1){
+                for (j in 0..<listOfSymbolsAtTheRight.size){
                     Button(onClick = {
                         if (num.isEmpty() && operation == "") {
                             Toast.makeText(context, "Введи число, друг", Toast.LENGTH_SHORT).show()
@@ -247,11 +297,11 @@ fun screen(){
                                 }
                                 if (operation == "÷") {
                                     if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
-                                        num = (numSavedDouble / 100 * num.toDouble()).toString()
+                                        num = (numSavedDouble / num.toDouble()).toString()
                                         operation = listOfSymbolsAtTheRight[j]
                                         numSavedDouble = num.toDouble()
                                     } else {
-                                        num = (numSavedLong / 100 * num.toLong()).toString()
+                                        num = (numSavedLong / num.toLong()).toString()
                                         operation = listOfSymbolsAtTheRight[j]
                                         numSavedLong = num.toLong()
                                     }
@@ -302,18 +352,29 @@ fun screen(){
                                 }
                                 num = ""
                             } else {
-                                if (operation == "÷") {
+                                if (operation == "%") {
                                     if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
-                                        num = (numSavedDouble / 100 * num.toDouble()).toString()
+                                        num = (numSavedDouble % num.toDouble()).toString()
                                         operation = listOfSymbolsAtTheRight[j]
                                         numSavedDouble = num.toDouble()
                                     } else {
-                                        num = (numSavedLong / 100 * num.toLong()).toString()
+                                        num = (numSavedLong % num.toLong()).toString()
                                         operation = listOfSymbolsAtTheRight[j]
                                         numSavedLong = num.toLong()
                                     }
                                 }
-                                if (operation == "x") {
+                                else if (operation == "÷") {
+                                    if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
+                                        num = (numSavedDouble /  num.toDouble()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedDouble = num.toDouble()
+                                    } else {
+                                        num = (numSavedLong / num.toLong()).toString()
+                                        operation = listOfSymbolsAtTheRight[j]
+                                        numSavedLong = num.toLong()
+                                    }
+                                }
+                                else if (operation == "x") {
                                     if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
                                         num = (numSavedDouble * num.toDouble()).toString()
                                         operation = listOfSymbolsAtTheRight[j]
@@ -324,7 +385,7 @@ fun screen(){
                                         numSavedLong = num.toLong()
                                     }
                                 }
-                                if (operation == "-") {
+                                else if (operation == "-") {
                                     if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
                                         num = (numSavedDouble - num.toDouble()).toString()
                                         operation = listOfSymbolsAtTheRight[j]
@@ -335,12 +396,13 @@ fun screen(){
                                         numSavedLong = num.toLong()
                                     }
                                 }
-                                if (operation == "+") {
+                                else if (operation == "+") {
                                     if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
                                         num = (numSavedDouble + num.toDouble()).toString()
                                         operation = listOfSymbolsAtTheRight[j]
                                         numSavedDouble = num.toDouble()
                                     } else {
+
                                         num = (numSavedLong + num.toLong()).toString()
                                         operation = listOfSymbolsAtTheRight[j]
                                         numSavedLong = num.toLong()
