@@ -152,14 +152,20 @@ fun screen(){
                                             }
                                         }
                                         else if (operation == "÷") {
-                                            if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
-                                                num = (numSavedDouble / 100 * num.toDouble()).toString()
-                                                operation = listOfSymbolsAtTheTop[i]
-                                                numSavedDouble = num.toDouble()
-                                            } else {
-                                                num = (numSavedLong / 100 * num.toLong()).toString()
-                                                operation = listOfSymbolsAtTheTop[i]
-                                                numSavedLong = num.toLong()
+                                            if(num=="0"){
+                                                Toast.makeText(context, "не дели на 0!!!!!", Toast.LENGTH_SHORT).show()
+                                            }
+                                            else {
+                                                if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
+                                                    num =
+                                                        (numSavedDouble / num.toDouble()).toString()
+                                                    operation = listOfSymbolsAtTheTop[i]
+                                                    numSavedDouble = num.toDouble()
+                                                } else {
+                                                    num = (numSavedLong / num.toLong()).toString()
+                                                    operation = listOfSymbolsAtTheTop[i]
+                                                    numSavedLong = num.toLong()
+                                                }
                                             }
                                         }
                                         else if (operation == "x") {
@@ -296,14 +302,19 @@ fun screen(){
                                     }
                                 }
                                 if (operation == "÷") {
-                                    if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
-                                        num = (numSavedDouble / num.toDouble()).toString()
-                                        operation = listOfSymbolsAtTheRight[j]
-                                        numSavedDouble = num.toDouble()
-                                    } else {
-                                        num = (numSavedLong / num.toLong()).toString()
-                                        operation = listOfSymbolsAtTheRight[j]
-                                        numSavedLong = num.toLong()
+                                    if(num=="0"){
+                                        Toast.makeText(context, "не дели на 0!!!!!", Toast.LENGTH_SHORT).show()
+                                    }
+                                    else {
+                                        if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
+                                            num = (numSavedDouble / num.toDouble()).toString()
+                                            operation = listOfSymbolsAtTheRight[j]
+                                            numSavedDouble = num.toDouble()
+                                        } else {
+                                            num = (numSavedLong / num.toLong()).toString()
+                                            operation = listOfSymbolsAtTheRight[j]
+                                            numSavedLong = num.toLong()
+                                        }
                                     }
                                 }
                                 if (operation == "x") {
@@ -364,14 +375,19 @@ fun screen(){
                                     }
                                 }
                                 else if (operation == "÷") {
-                                    if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
-                                        num = (numSavedDouble /  num.toDouble()).toString()
-                                        operation = listOfSymbolsAtTheRight[j]
-                                        numSavedDouble = num.toDouble()
-                                    } else {
-                                        num = (numSavedLong / num.toLong()).toString()
-                                        operation = listOfSymbolsAtTheRight[j]
-                                        numSavedLong = num.toLong()
+                                    if(num=="0"){
+                                        Toast.makeText(context, "не дели на 0!!!!!", Toast.LENGTH_SHORT).show()
+                                    }
+                                    else {
+                                        if (num.count { c -> c == '.' } == 1 || numSavedDouble != 0.0) {
+                                            num = (numSavedDouble / num.toDouble()).toString()
+                                            operation = listOfSymbolsAtTheRight[j]
+                                            numSavedDouble = num.toDouble()
+                                        } else {
+                                            num = (numSavedLong / num.toLong()).toString()
+                                            operation = listOfSymbolsAtTheRight[j]
+                                            numSavedLong = num.toLong()
+                                        }
                                     }
                                 }
                                 else if (operation == "x") {
@@ -414,9 +430,9 @@ fun screen(){
 
 
                         , colors = ButtonDefaults.buttonColors(Color.Green), modifier = Modifier
-                        .weight(0.25f)
-                        .fillMaxWidth(1f)
-                        .padding(3.dp)) {
+                            .weight(0.25f)
+                            .fillMaxWidth(1f)
+                            .padding(3.dp)) {
                      Text(text =listOfSymbolsAtTheRight[j],fontSize = 25.sp )
                     }
                 }
